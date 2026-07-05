@@ -1,18 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { Check, Star, Play, CheckCircle2, AlertTriangle, Calendar, Flame, Plus, Bot } from 'lucide-react';
+import { Task } from '@prisma/client';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface OverviewTabProps {
   onAddTask: () => void;
-  onEditTask: (task: any) => void;
+  onEditTask: (task: Task) => void;
   onToggleStatus: (id: string, currentStatus: string) => void;
   onToggleStar: (id: string, currentStar: boolean) => void;
   onNavigateToAI: () => void;
 }
 
+export interface StatsData {
+  kpis: {
+    totalTasks: { count: number; change: string };
+    completedTasks: { count: number; change: string };
+    inProgressTasks: { count: number; change: string };
+    overdueTasks: { count: number; change: string };
+  };
+  weeklyChartData: { name: string; 'Tổng công việc': number; 'Hoàn thành': number }[];
+  distribution: { name: string; value: number; color: string }[];
+  productivity: {
+    currentStreak: number;
+    recordStreak: number;
+  };
+}
+
 export default function OverviewTab({ onAddTask, onEditTask, onToggleStatus, onToggleStar, onNavigateToAI }: OverviewTabProps) {
-  const [stats, setStats] = useState<any>(null);
-  const [todayTasks, setTodayTasks] = useState<any[]>([]);
+  const [stats, setStats] = useState<StatsData | null>(null);
+  const [todayTasks, setTodayTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Tính 7 ngày trong tuần hiện tại
@@ -55,7 +71,7 @@ export default function OverviewTab({ onAddTask, onEditTask, onToggleStatus, onT
   const dynamicTimelineEvents = todayTasks
     .filter(t => t.deadline)
     .map(t => {
-      const d = new Date(t.deadline);
+      const d = new Date(t.deadline!);
       return {
         time: d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
         title: t.title,
@@ -184,7 +200,7 @@ export default function OverviewTab({ onAddTask, onEditTask, onToggleStatus, onT
                 <p className="text-xs">Không có công việc nào cần làm hôm nay.</p>
               </div>
             ) : (
-              todayTasks.map((task: any) => {
+              todayTasks.map((task: Task) => {
                 const isCompleted = task.status === 'Completed';
                 return (
                   <div
@@ -330,7 +346,7 @@ export default function OverviewTab({ onAddTask, onEditTask, onToggleStatus, onT
                     paddingAngle={3}
                     dataKey="value"
                   >
-                    {distribution.map((entry: any, index: number) => (
+                    {distribution.map((entry: { name: string; value: number; color: string }, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -345,7 +361,7 @@ export default function OverviewTab({ onAddTask, onEditTask, onToggleStatus, onT
             
             {/* Legend */}
             <div className="w-1/2 space-y-2">
-              {distribution.map((entry: any, index: number) => (
+              {distribution.map((entry: { name: string; value: number; color: string }, index: number) => (
                 <div key={index} className="flex items-center justify-between text-[10px]">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: entry.color }} />

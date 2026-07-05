@@ -58,7 +58,7 @@ export default function AIPriorityModal({ isOpen, onClose, proposals, onApply }:
       setIsApplying(true);
       await onApply(selectedProposals);
       onClose();
-    } catch (e) {
+    } catch {
       alert('Lỗi khi áp dụng độ ưu tiên mới.');
     } finally {
       setIsApplying(false);

@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
     const tasks = await TaskService.getAllTasks({ status, priority, search, projectId });
     return NextResponse.json({ success: true, data: tasks });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi lấy danh sách tasks:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể tải danh sách công việc.' },
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const newTask = await TaskService.createTask(body);
     return NextResponse.json({ success: true, data: newTask }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi tạo task:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể tạo công việc mới.' },

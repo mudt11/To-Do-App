@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
 import { Flame, Target, TrendingUp, Award } from 'lucide-react';
+import { StatsData } from './OverviewTab';
 
 export default function StatsTab() {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<StatsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -122,7 +123,7 @@ export default function StatsTab() {
                     paddingAngle={3}
                     dataKey="value"
                   >
-                    {distribution.map((entry: any, index: number) => (
+                    {distribution.map((entry: { name: string; value: number; color: string }, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -137,7 +138,7 @@ export default function StatsTab() {
 
           {/* Legend Table */}
           <div className="grid grid-cols-2 gap-3 pt-4 border-t border-zinc-850">
-            {distribution.map((entry: any, index: number) => (
+            {distribution.map((entry: { name: string; value: number; color: string }, index: number) => (
               <div key={index} className="flex items-center gap-2 text-[10px]">
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: entry.color }} />
                 <span className="text-zinc-400 font-medium truncate">{entry.name}</span>

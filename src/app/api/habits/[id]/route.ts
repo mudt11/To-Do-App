@@ -8,7 +8,7 @@ export async function DELETE(
   try {
     await HabitService.deleteHabit(params.id);
     return NextResponse.json({ success: true, message: 'Xoá thói quen thành công.' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Lỗi khi xoá thói quen ${params.id}:`, error);
     return NextResponse.json(
       { success: false, error: 'Không thể xoá thói quen.' },

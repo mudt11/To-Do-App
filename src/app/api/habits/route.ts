@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const habits = await HabitService.getAllHabits();
     return NextResponse.json({ success: true, data: habits });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi lấy danh sách thói quen:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể tải danh sách thói quen.' },
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const newHabit = await HabitService.createHabit(body);
     return NextResponse.json({ success: true, data: newHabit }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi tạo thói quen:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể tạo thói quen mới.' },

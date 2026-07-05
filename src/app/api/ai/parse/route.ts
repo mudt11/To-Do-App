@@ -17,10 +17,11 @@ export async function POST(request: NextRequest) {
     const parsedData = await GeminiService.parseTaskFromNaturalLanguage(prompt, timeContext);
 
     return NextResponse.json({ success: true, data: parsedData });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi gọi API Parse Task:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Không thể xử lý yêu cầu bằng AI.';
     return NextResponse.json(
-      { success: false, error: error.message || 'Không thể xử lý yêu cầu bằng AI.' },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

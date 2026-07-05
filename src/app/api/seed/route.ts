@@ -15,7 +15,7 @@ export async function GET() {
       success: true,
       message: 'Nạp dữ liệu mẫu seed data thành công! Hãy reload lại trang để xem thành quả.'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi nạp seed data:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể nạp dữ liệu mẫu.' },

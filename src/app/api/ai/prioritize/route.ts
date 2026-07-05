@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const proposals = await GeminiService.suggestReprioritization(unfinishedTasks, timeContext);
 
     // 4. Map thêm title và priority hiện tại để UI hiển thị trực quan
-    const detailedProposals = proposals.map((prop: any) => {
+    const detailedProposals = proposals.map((prop: { id: string; suggestedPriority: string; reason: string }) => {
       const task = unfinishedTasks.find(t => t.id === prop.id);
       return {
         ...prop,
@@ -37,10 +37,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true, data: detailedProposals });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi gọi API Prioritize:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Không thể tính toán độ ưu tiên bằng AI.';
     return NextResponse.json(
-      { success: false, error: error.message || 'Không thể tính toán độ ưu tiên bằng AI.' },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

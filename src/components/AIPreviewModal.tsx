@@ -46,7 +46,7 @@ export default function AIPreviewModal({ isOpen, onClose, data, onConfirm }: AIP
       const date = new Date(dateStr);
       const tzoffset = date.getTimezoneOffset() * 60000;
       return (new Date(date.getTime() - tzoffset)).toISOString().slice(0, 16);
-    } catch (e) {
+    } catch {
       return '';
     }
   };
@@ -98,7 +98,7 @@ export default function AIPreviewModal({ isOpen, onClose, data, onConfirm }: AIP
         subtasks,
       });
       onClose();
-    } catch (e) {
+    } catch {
       alert('Không thể lưu công việc.');
     } finally {
       setIsSaving(false);

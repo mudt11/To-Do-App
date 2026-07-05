@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { Task } from '@prisma/client';
 
 interface CalendarTabProps {
-  onEditTask: (task: any) => void;
+  onEditTask: (task: Task) => void;
   onToggleStatus: (id: string, currentStatus: string) => void;
 }
 
 export default function CalendarTab({ onEditTask, onToggleStatus }: CalendarTabProps) {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
@@ -16,8 +17,8 @@ export default function CalendarTab({ onEditTask, onToggleStatus }: CalendarTabP
       const res = await fetch('/api/tasks');
       const result = await res.json();
       if (result.success) setTasks(result.data);
-    } catch (e) {
-      console.error(e);
+    } catch (_e) {
+      console.error(_e);
     }
   };
 

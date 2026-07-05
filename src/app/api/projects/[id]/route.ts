@@ -14,7 +14,7 @@ export async function GET(
       );
     }
     return NextResponse.json({ success: true, data: project });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Lỗi khi lấy dự án ${params.id}:`, error);
     return NextResponse.json(
       { success: false, error: 'Không thể tải thông tin dự án.' },
@@ -31,7 +31,7 @@ export async function PUT(
     const body = await request.json();
     const updatedProject = await ProjectService.updateProject(params.id, body);
     return NextResponse.json({ success: true, data: updatedProject });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Lỗi khi cập nhật dự án ${params.id}:`, error);
     return NextResponse.json(
       { success: false, error: 'Không thể cập nhật dự án.' },
@@ -47,7 +47,7 @@ export async function DELETE(
   try {
     await ProjectService.deleteProject(params.id);
     return NextResponse.json({ success: true, message: 'Xoá dự án thành công.' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Lỗi khi xoá dự án ${params.id}:`, error);
     return NextResponse.json(
       { success: false, error: 'Không thể xoá dự án.' },

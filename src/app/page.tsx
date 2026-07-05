@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Sparkles, Search, Bell, Plus, LayoutDashboard, CheckSquare, 
-  FolderOpen, Calendar, BarChart3, Bot, Check, Settings 
+  FolderOpen, Calendar, BarChart3, Bot, Settings 
 } from 'lucide-react';
 
 import OverviewTab from '@/components/tabs/OverviewTab';
@@ -14,8 +14,14 @@ import StatsTab from '@/components/tabs/StatsTab';
 import AIAssistantTab from '@/components/tabs/AIAssistantTab';
 import HabitsTab from '@/components/tabs/HabitsTab';
 import SettingsTab from '@/components/tabs/SettingsTab';
+import TaskForm, { TaskFormData } from '@/components/TaskForm';
 
-import TaskForm from '@/components/TaskForm';
+import { ParsedTaskData } from '@/components/AIChatBox';
+
+export type TaskToEditType = Partial<Omit<TaskFormData, 'deadline'>> & {
+  id?: string;
+  deadline?: string | Date | null;
+};
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -27,7 +33,7 @@ export default function Home() {
 
   // Form Modal States
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState<any>(null);
+  const [taskToEdit, setTaskToEdit] = useState<TaskToEditType | null>(null);
   const [parentId, setParentId] = useState<string | null>(null);
 
   // Load sidebar progress real-time
@@ -75,7 +81,7 @@ export default function Home() {
   }, [fetchSidebarProgress]);
 
   // Sửa/Tạo Task xong
-  const handleFormSubmit = async (taskData: any) => {
+  const handleFormSubmit = async (taskData: TaskFormData) => {
     const isEdit = !!taskToEdit?.id;
     const url = isEdit ? `/api/tasks/${taskToEdit.id}` : '/api/tasks';
     const method = isEdit ? 'PUT' : 'POST';
@@ -130,7 +136,7 @@ export default function Home() {
     { id: 'settings', label: 'Cài đặt', icon: Settings },
   ];
 
-  const handleProposeTask = (proposedTask: any) => {
+  const handleProposeTask = (proposedTask: ParsedTaskData) => {
     let formattedDeadline = '';
     if (proposedTask.deadline) {
       const d = new Date(proposedTask.deadline);
@@ -149,7 +155,6 @@ export default function Home() {
       priority: proposedTask.priority || 'Medium',
       tags: proposedTask.tags || '',
       projectId: null,
-      subtasks: proposedTask.subtasks || []
     });
     setParentId(null);
     setIsFormOpen(true);
@@ -405,7 +410,7 @@ export default function Home() {
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}
-        taskToEdit={taskToEdit}
+        taskToEdit={taskToEdit || undefined}
         parentId={parentId}
       />
     </div>

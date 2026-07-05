@@ -1,21 +1,25 @@
+import { PrismaNeonHttp } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 
 const prismaClientSingleton = () => {
-  const dbUrl = process.env.DATABASE_URL || 'file:./dev.db';
-  const adapter = new PrismaBetterSqlite3({
-    url: dbUrl,
-  });
-  
+  const connectionString = process.env.DATABASE_URL?.trim();
+
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is not defined trong file .env!");
+  }
+
+  // Truyền trực tiếp chuỗi kết nối và một object tùy chọn rỗng vào thẳng adapter
+  const adapter = new PrismaNeonHttp(connectionString, {});
+
   return new PrismaClient({ adapter });
 };
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 export default prisma;
 
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

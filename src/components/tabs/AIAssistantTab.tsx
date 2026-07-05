@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Loader2 } from 'lucide-react';
+import { ParsedTaskData } from '../AIChatBox';
 
 interface Message {
   role: 'user' | 'model';
@@ -7,7 +8,7 @@ interface Message {
 }
 
 interface AIAssistantTabProps {
-  onProposeTask?: (task: any) => void;
+  onProposeTask?: (task: ParsedTaskData) => void;
 }
 
 export default function AIAssistantTab({ onProposeTask }: AIAssistantTabProps) {
@@ -17,7 +18,7 @@ export default function AIAssistantTab({ onProposeTask }: AIAssistantTabProps) {
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch (e) {}
+        } catch {}
       }
     }
     return [
@@ -81,8 +82,8 @@ export default function AIAssistantTab({ onProposeTask }: AIAssistantTabProps) {
           { role: 'model', text: 'Xin lỗi anh Thạch, tôi gặp sự cố kết nối với bộ não Gemini. Vui lòng kiểm tra lại API Key.' },
         ]);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (_e) {
+      console.error(_e);
       setMessages((prev) => [...prev, { role: 'model', text: 'Không thể kết nối đến máy chủ AI.' }]);
     } finally {
       setIsSending(false);

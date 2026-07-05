@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Calendar, FolderOpen } from 'lucide-react';
+import { Project } from '@prisma/client';
+
+type ProjectWithStats = Project & { progress: number; totalTasks: number; completedTasks: number; };
 
 export default function ProjectsTab() {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<ProjectWithStats[]>([]);
   const [activeSubTab, setActiveSubTab] = useState('All'); // 'All', 'Active', 'Completed'
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,8 +22,8 @@ export default function ProjectsTab() {
       if (result.success) {
         setProjects(result.data);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (_e) {
+      console.error(_e);
     }
   };
 

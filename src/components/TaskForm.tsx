@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, AlertCircle } from 'lucide-react';
+import { Project } from '@prisma/client';
+import { TaskToEditType } from '@/app/page';
+
+export interface TaskFormData {
+  title: string;
+  description: string | null;
+  deadline: string | null;
+  priority: string;
+  status: string;
+  tags: string | null;
+  parentId: string | null;
+  projectId: string | null;
+}
 
 interface TaskFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    title: string;
-    description: string | null;
-    deadline: string | null;
-    priority: string;
-    status: string;
-    tags: string | null;
-    parentId: string | null;
-    projectId: string | null;
-  }) => Promise<void>;
-  taskToEdit?: any;
+  onSubmit: (data: TaskFormData) => Promise<void>;
+  taskToEdit?: TaskToEditType;
   parentId?: string | null;
 }
 
@@ -26,7 +30,7 @@ export default function TaskForm({ isOpen, onClose, onSubmit, taskToEdit, parent
   const [status, setStatus] = useState('Todo');
   const [tags, setTags] = useState('');
   const [projectId, setProjectId] = useState('');
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -53,11 +57,11 @@ export default function TaskForm({ isOpen, onClose, onSubmit, taskToEdit, parent
 
   useEffect(() => {
     if (taskToEdit) {
-      setTitle(taskToEdit.title);
+      setTitle(taskToEdit.title || '');
       setDescription(taskToEdit.description || '');
-      setDeadline(formatForInput(taskToEdit.deadline));
-      setPriority(taskToEdit.priority);
-      setStatus(taskToEdit.status);
+      setDeadline(formatForInput(taskToEdit.deadline || null));
+      setPriority(taskToEdit.priority || 'Medium');
+      setStatus(taskToEdit.status || 'Todo');
       setTags(taskToEdit.tags || '');
       setProjectId(taskToEdit.projectId || '');
     } else {
@@ -91,12 +95,13 @@ export default function TaskForm({ isOpen, onClose, onSubmit, taskToEdit, parent
         priority,
         status,
         tags: tags.trim() || null,
-        parentId: taskToEdit ? taskToEdit.parentId : (parentId || null),
+        parentId: taskToEdit ? (taskToEdit.parentId || null) : (parentId || null),
         projectId: projectId || null,
       });
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

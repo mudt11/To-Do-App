@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, Project, Task } from '@prisma/client';
 
 export class ProjectService {
   // Lấy tất cả dự án kèm thống kê số lượng task và tính % tiến độ
@@ -18,9 +18,11 @@ export class ProjectService {
       },
     });
 
-    return projects.map((project: any) => {
+    type ProjectWithTaskStats = Project & { tasks: { id: string; status: string }[] };
+
+    return projects.map((project: ProjectWithTaskStats) => {
       const totalTasksCount = project.tasks.length;
-      const completedTasksCount = project.tasks.filter((t: any) => t.status === 'Completed').length;
+      const completedTasksCount = project.tasks.filter((t) => t.status === 'Completed').length;
       const progress = totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 0;
 
       return {
@@ -53,7 +55,7 @@ export class ProjectService {
     if (!project) return null;
 
     const totalTasksCount = project.tasks.length;
-      const completedTasksCount = project.tasks.filter((t: any) => t.status === 'Completed').length;
+      const completedTasksCount = project.tasks.filter((t: Task) => t.status === 'Completed').length;
       const progress = totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 0;
 
     return {

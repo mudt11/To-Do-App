@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Check, Star, Plus, Search } from 'lucide-react';
+import { Task } from '@prisma/client';
+
+export type TaskWithProject = Task & { project?: { name: string; color: string } | null };
 
 interface TasksTabProps {
   onAddTask: (parentId?: string | null) => void;
-  onEditTask: (task: any) => void;
+  onEditTask: (task: TaskWithProject) => void;
   onToggleStatus: (id: string, currentStatus: string) => void;
   onToggleStar: (id: string, currentStar: boolean) => void;
 }
 
 export default function TasksTab({ onAddTask, onEditTask, onToggleStatus, onToggleStar }: TasksTabProps) {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<TaskWithProject[]>([]);
   const [search, setSearch] = useState('');
   const [tagFilter, setTagFilter] = useState(''); // '', 'Cá nhân', 'Công việc', 'Học tập'
   const [priorityFilter, setPriorityFilter] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+
 
   const fetchTasks = async () => {
     try {
-      setIsLoading(true);
+
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       if (priorityFilter) params.append('priority', priorityFilter);
@@ -27,15 +30,14 @@ export default function TasksTab({ onAddTask, onEditTask, onToggleStatus, onTogg
       if (result.success) {
         setTasks(result.data);
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
+    } catch (_e) {
+      console.error(_e);
     }
   };
 
   useEffect(() => {
     fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, priorityFilter]);
 
   const getPriorityBadgeStyle = (priority: string) => {

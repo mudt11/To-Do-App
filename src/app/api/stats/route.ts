@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { TaskService } from '@/services/task.service';
 import { ProjectService } from '@/services/project.service';
 import { HabitService } from '@/services/habit.service';
@@ -82,7 +82,7 @@ export async function GET() {
         }
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi lấy thống kê:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể tải dữ liệu thống kê.' },

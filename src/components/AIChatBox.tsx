@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Send, Sparkles, MessageSquare } from 'lucide-react';
 
+export interface ParsedTaskData {
+  title: string;
+  description: string | null;
+  deadline: string | null;
+  priority: string;
+  tags: string | null;
+  subtasks?: string[];
+}
+
 interface Message {
   sender: 'user' | 'ai';
   text: string;
-  data?: any; // Lưu dữ liệu JSON parse được
+  data?: ParsedTaskData; // Lưu dữ liệu JSON parse được
   error?: boolean;
 }
 
 interface AIChatBoxProps {
-  onTaskParsed: (parsedData: any) => void;
+  onTaskParsed: (parsedData: ParsedTaskData) => void;
 }
 
 export default function AIChatBox({ onTaskParsed }: AIChatBoxProps) {
@@ -64,7 +73,7 @@ export default function AIChatBox({ onTaskParsed }: AIChatBoxProps) {
           },
         ]);
       }
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
@@ -117,7 +126,7 @@ export default function AIChatBox({ onTaskParsed }: AIChatBoxProps) {
                 {/* Nút Xem trước nếu có data */}
                 {isAI && msg.data && (
                   <button
-                    onClick={() => onTaskParsed(msg.data)}
+                    onClick={() => onTaskParsed(msg.data!)}
                     className="self-start px-2.5 py-1 text-[10px] rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 transition-all font-medium flex items-center gap-1 focus:outline-none"
                   >
                     <Sparkles className="w-3 h-3" />

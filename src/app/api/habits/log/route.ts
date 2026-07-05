@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const updatedHabits = await HabitService.toggleHabitLog(habitId, date);
     return NextResponse.json({ success: true, data: updatedHabits });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Lỗi khi log thói quen:', error);
     return NextResponse.json(
       { success: false, error: 'Không thể cập nhật trạng thái thói quen.' },

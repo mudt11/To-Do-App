@@ -11,7 +11,7 @@ export async function PUT(
 
     const updatedTask = await TaskService.updateTask(id, body);
     return NextResponse.json({ success: true, data: updatedTask });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Lỗi khi cập nhật task ${params.id}:`, error);
     return NextResponse.json(
       { success: false, error: 'Không thể cập nhật công việc.' },
@@ -28,7 +28,7 @@ export async function DELETE(
     const id = params.id;
     await TaskService.deleteTask(id);
     return NextResponse.json({ success: true, message: 'Xoá công việc thành công.' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Lỗi khi xoá task ${params.id}:`, error);
     return NextResponse.json(
       { success: false, error: 'Không thể xoá công việc.' },

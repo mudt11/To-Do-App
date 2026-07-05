@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Flame, Check, Sparkles } from 'lucide-react';
+import { Habit } from '@prisma/client';
+
+type HabitWithLogs = Habit & { logs: { id: string; date: string }[] };
 
 export default function HabitsTab() {
-  const [habits, setHabits] = useState<any[]>([]);
+  const [habits, setHabits] = useState<HabitWithLogs[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState('');
   const [color, setColor] = useState('#10b981');
@@ -14,8 +17,8 @@ export default function HabitsTab() {
       const res = await fetch('/api/habits');
       const result = await res.json();
       if (result.success) setHabits(result.data);
-    } catch (e) {
-      console.error(e);
+    } catch (_e) {
+      console.error(_e);
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +161,7 @@ export default function HabitsTab() {
               {/* Ma trận check-in hàng tuần */}
               <div className="flex items-center gap-4 justify-between sm:justify-end">
                 {weekDates.map((dateStr, idx) => {
-                  const isChecked = habit.logs.some((log: any) => log.date === dateStr);
+                  const isChecked = habit.logs.some((log) => log.date === dateStr);
                   return (
                     <div key={dateStr} className="flex flex-col items-center gap-1">
                       <span className="text-[8px] text-zinc-500 font-bold uppercase">{dayNames[idx]}</span>

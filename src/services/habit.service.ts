@@ -96,7 +96,7 @@ export class HabitService {
 
     if (logs.length === 0) return 0;
 
-    const loggedDates = logs.map((l: any) => l.date);
+    const loggedDates = logs.map((l: { date: string }) => l.date);
 
     // Lấy ngày hiện tại hệ thống cục bộ (format YYYY-MM-DD)
     const getLocalBaseDate = (dateObj: Date) => {

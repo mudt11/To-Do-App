@@ -105,7 +105,7 @@ Chỉ trả về chuỗi JSON thô, không kèm định dạng markdown codebloc
     }
   }
 
-  static async chatWithAssistant(userMessage: string, history: any[]) {
+  static async chatWithAssistant(userMessage: string, history: { role: string; text: string }[]) {
     // 1. Thu thập dữ liệu DB làm Context
     const tasks = await prisma.task.findMany({
       include: { project: true }
@@ -188,7 +188,7 @@ Nếu người dùng chỉ trò chuyện thông thường hoặc hỏi đáp mà
       systemInstruction: context
     });
 
-    let formattedHistory = history.map((h: any) => ({
+    const formattedHistory = history.map((h) => ({
       role: h.role === 'user' ? 'user' : 'model',
       parts: [{ text: h.text }]
     }));

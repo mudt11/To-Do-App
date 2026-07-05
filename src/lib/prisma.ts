@@ -1,15 +1,18 @@
-import { PrismaNeonHttp } from '@prisma/adapter-neon';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
-  const connectionString = process.env.DATABASE_URL?.trim();
+  let connectionString = process.env.DATABASE_URL || '';
+  // Cắt bỏ dấu ngoặc kép nếu file .env bị dính
+  connectionString = connectionString.replace(/^"|"$/g, '').trim();
 
   if (!connectionString) {
     throw new Error("DATABASE_URL is not defined trong file .env!");
   }
 
-  // Truyền trực tiếp chuỗi kết nối và một object tùy chọn rỗng vào thẳng adapter
-  const adapter = new PrismaNeonHttp(connectionString, {});
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaPg(pool);
 
   return new PrismaClient({ adapter });
 };

@@ -11,8 +11,7 @@ export async function POST(request: NextRequest) {
     const allTasks = await TaskService.getAllTasksFlat();
     
     // 2. Lọc ra các task chưa hoàn thành
-    const unfinishedTasks = allTasks.filter(task => task.status !== 'Completed');
-
+    const unfinishedTasks = allTasks.filter((task: any) => task.status !== 'Completed');
     if (unfinishedTasks.length === 0) {
       return NextResponse.json({
         success: true,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TaskService } from '@/services/task.service';
 import { GeminiService } from '@/services/gemini.service';
+import { Task } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +12,7 @@ export async function POST(request: NextRequest) {
     const allTasks = await TaskService.getAllTasksFlat();
 
     // 2. Lọc ra các task chưa hoàn thành
-    const unfinishedTasks = allTasks.filter((task: any) => task.status !== 'Completed');
-    if (unfinishedTasks.length === 0) {
+    const unfinishedTasks = allTasks.filter((task: Task) => task.status !== 'Completed'); if (unfinishedTasks.length === 0) {
       return NextResponse.json({
         success: true,
         data: [],

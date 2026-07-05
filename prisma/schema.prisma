@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  deadline    DateTime?
+  priority    String    @default("Medium") // Low, Medium, High
+  status      String    @default("Todo")   // Todo, InProgress, Completed
+  tags        String?                      // Lưu dưới dạng chuỗi các tag phân tách bằng dấu phẩy
+  isStarred   Boolean   @default(false)    // Đánh dấu công việc quan trọng (Ngôi sao)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Hỗ trợ Subtasks (tự tham chiếu)
+  parentId    String?
+  parent      Task?     @relation("SubTasks", fields: [parentId], references: [id], onDelete: Cascade)
+  subtasks    Task[]    @relation("SubTasks")
+
+  // Liên kết với Dự án
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  color       String    @default("#3b82f6") // Màu sắc của dự án hiển thị trên UI
+  deadline    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tasks       Task[]
+}
+
+model Habit {
+  id          String    @id @default(uuid())
+  name        String
+  color       String    @default("#10b981") // Màu sắc thói quen
+  streak      Int       @default(0)         // Số ngày hoàn thành liên tiếp
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  logs        HabitLog[]
+}
+
+model HabitLog {
+  id          String    @id @default(uuid())
+  habitId     String
+  habit       Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date        String    // Ngày check-in định dạng YYYY-MM-DD
+  createdAt   DateTime  @default(now())
+
+  @@unique([habitId, date]) // Đảm bảo một ngày chỉ check-in thói quen một lần
+}

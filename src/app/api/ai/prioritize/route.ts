@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
     // 1. Lấy toàn bộ danh sách task
     const allTasks = await TaskService.getAllTasksFlat();
-    
+
     // 2. Lọc ra các task chưa hoàn thành
     const unfinishedTasks = allTasks.filter((task: any) => task.status !== 'Completed');
     if (unfinishedTasks.length === 0) {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const timeContext = clientTime || new Date().toString();
-    
+
     // 3. Gọi Gemini đề xuất sắp xếp lại độ ưu tiên
     const proposals = await GeminiService.suggestReprioritization(unfinishedTasks, timeContext);
 

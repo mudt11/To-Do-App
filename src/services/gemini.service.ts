@@ -105,7 +105,7 @@ Chỉ trả về chuỗi JSON thô, không kèm định dạng markdown codebloc
     }
   }
 
-  static async chatWithAssistant(userMessage: string, history: { role: string; text: string }[]) {
+  static async chatWithAssistant(userMessage: string, history: { role: string; text: string }[], userName: string = "Người dùng", userEmail: string = "") {
     // 1. Thu thập dữ liệu DB làm Context
     const tasks = await prisma.task.findMany({
       include: { project: true }
@@ -133,11 +133,11 @@ Chỉ trả về chuỗi JSON thô, không kèm định dạng markdown codebloc
 
   const localTimeStr = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
   const context = `
-Bạn là một trợ lý AI thông minh tích hợp trong ứng dụng AI TodoFlow của người dùng tên là "Đình Thạch".
-Bạn có quyền truy cập trực tiếp vào cơ sở dữ liệu công việc hiện tại của Đình Thạch để tư vấn, phân tích hiệu suất và lập kế hoạch giúp anh ấy.
+Bạn là một trợ lý AI thông minh tích hợp trong ứng dụng AI TodoFlow của người dùng tên là "${userName}".
+Bạn có quyền truy cập trực tiếp vào cơ sở dữ liệu công việc hiện tại của ${userName} để tư vấn, phân tích hiệu suất và lập kế hoạch giúp họ.
 
-Dưới đây là DỮ LIỆU CỦA ĐÌNH THẠCH hiện tại:
-- Người dùng: Đình Thạch (email: dinhthach@gmail.com).
+Dưới đây là DỮ LIỆU CỦA ${userName.toUpperCase()} hiện tại:
+- Người dùng: ${userName} (email: ${userEmail}).
 - Tổng số công việc đã tạo: ${tasks.length} (Đã hoàn thành: ${completedTasksCount}, Chưa hoàn thành: ${unfinishedTasks.length}).
 - Danh sách công việc CHƯA hoàn thành:
 ${JSON.stringify(unfinishedTasks.map(t => ({
@@ -157,13 +157,13 @@ ${JSON.stringify(habits.map(h => ({
 })), null, 2)}
 
 HƯỚNG DẪN TRẢ LỜI:
-1. Xưng hô thân thiện, gọi người dùng là "Đình Thạch" hoặc "anh Thạch".
+1. Xưng hô thân thiện, gọi người dùng là "${userName}".
 2. Dựa vào dữ liệu thực tế trên để tư vấn:
    - Nếu được hỏi về việc cần làm hoặc cách tối ưu: Hãy liệt kê các công việc có độ ưu tiên Cao (High) hoặc đã quá hạn, đề xuất chia nhỏ thành subtask và sắp xếp thứ tự thực hiện khoa học.
-   - Nếu hỏi về thói quen: Khích lệ anh ấy tiếp tục dựa trên số ngày streak hiện có.
+   - Nếu hỏi về thói quen: Khích lệ họ tiếp tục dựa trên số ngày streak hiện có.
    - Nếu hỏi về kế hoạch tuần: Đề xuất một lịch trình phân bổ các task chưa làm vào các ngày trong tuần.
 3. Trả lời bằng tiếng Việt, ngắn gọn, súc tích, định dạng Markdown rõ ràng, dễ đọc (sử dụng gạch đầu dòng, bôi đậm). Tránh viết dài dòng lan man.
-4. QUAN TRỌNG: Nếu Đình Thạch yêu cầu tạo mới, lên lịch, nhắc nhở hoặc thêm một công việc/lịch trình (ví dụ: "lên lịch đi chơi chiều mai", "thêm task họp lúc 9h", v.v.), bạn HÃY PHÂN TÍCH nội dung câu nói của anh ấy thành một đối tượng JSON đề xuất công việc và đính kèm chính xác ở DÒNG CUỐI CÙNG của câu trả lời dưới định dạng tag đặc biệt như sau:
+4. QUAN TRỌNG: Nếu ${userName} yêu cầu tạo mới, lên lịch, nhắc nhở hoặc thêm một công việc/lịch trình (ví dụ: "lên lịch đi chơi chiều mai", "thêm task họp lúc 9h", v.v.), bạn HÃY PHÂN TÍCH nội dung câu nói của họ thành một đối tượng JSON đề xuất công việc và đính kèm chính xác ở DÒNG CUỐI CÙNG của câu trả lời dưới định dạng tag đặc biệt như sau:
 <PROPOSAL>
 {
   "title": "Tên công việc ngắn gọn (viết hoa chữ đầu)",

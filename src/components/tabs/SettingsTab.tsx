@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { User, Shield, Bell, Key, Database, Globe, Info, Download, Upload, LogOut } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function SettingsTab() {
+  const { data: session } = useSession();
   const [activeMenu, setActiveMenu] = useState('account');
   const [theme, setTheme] = useState('dark');
   const [lang, setLang] = useState('vi');
@@ -89,12 +91,12 @@ export default function SettingsTab() {
 
             {/* Profile Row */}
             <div className="flex items-center gap-4 p-4 rounded-2xl border border-zinc-800 bg-zinc-950/10">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center text-white text-lg font-bold">
-                DT
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center text-white text-lg font-bold uppercase">
+                {session?.user?.name ? session.user.name.substring(0, 2) : 'U'}
               </div>
               <div className="min-w-0">
-                <h4 className="text-xs font-bold text-zinc-200">Đình Thạch</h4>
-                <p className="text-[10px] text-zinc-500 font-medium">dinhthach@gmail.com</p>
+                <h4 className="text-xs font-bold text-zinc-200">{session?.user?.name || "Người dùng"}</h4>
+                <p className="text-[10px] text-zinc-500 font-medium">{session?.user?.email || "Chưa đăng nhập"}</p>
               </div>
               <button className="px-3.5 py-1.5 text-[10px] font-bold rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 transition-colors focus:outline-none ml-auto">
                 Chỉnh sửa
@@ -186,7 +188,7 @@ export default function SettingsTab() {
             <div className="pt-4 border-t border-zinc-800 flex justify-end">
               <button
                 type="button"
-                onClick={() => alert('Đã đăng xuất tài khoản Đình Thạch cục bộ.')}
+                onClick={() => signOut({ callbackUrl: '/auth/login' })}
                 className="px-4 py-2 text-xs font-bold rounded-xl border border-red-500/25 text-red-500 hover:bg-red-500/10 transition-colors flex items-center gap-1.5 focus:outline-none"
               >
                 <LogOut className="w-4 h-4" />

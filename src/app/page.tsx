@@ -5,6 +5,7 @@ import {
   Sparkles, Search, Bell, Plus, LayoutDashboard, CheckSquare, 
   FolderOpen, Calendar, BarChart3, Bot, Settings 
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 import OverviewTab from '@/components/tabs/OverviewTab';
 import TasksTab from '@/components/tabs/TasksTab';
@@ -24,6 +25,7 @@ export type TaskToEditType = Partial<Omit<TaskFormData, 'deadline'>> & {
 };
 
 export default function Home() {
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState('overview');
   
   // States cho sidebar progress
@@ -248,12 +250,12 @@ export default function Home() {
 
           {/* User Profile Card */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center text-white text-xs font-bold">
-              DT
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center text-white text-xs font-bold uppercase">
+              {session?.user?.name ? session.user.name.substring(0, 2) : 'U'}
             </div>
             <div className="min-w-0">
-              <h4 className="text-xs font-bold text-zinc-200 truncate">Đình Thạch</h4>
-              <p className="text-[9px] text-zinc-500 font-medium truncate">dinhthach@gmail.com</p>
+              <h4 className="text-xs font-bold text-zinc-200 truncate">{session?.user?.name || "Người dùng"}</h4>
+              <p className="text-[9px] text-zinc-500 font-medium truncate">{session?.user?.email || "Chưa đăng nhập"}</p>
             </div>
           </div>
 
@@ -270,7 +272,7 @@ export default function Home() {
             {/* Greeting & Date */}
             <div>
               <h2 className="text-sm font-bold text-zinc-100">
-                {greeting}, Đình Thạch! 👋
+                {greeting}, {session?.user?.name ? session.user.name.split(' ').pop() : 'Bạn'}! 👋
               </h2>
               <p className="text-[10px] text-zinc-500 font-medium mt-0.5">{currentDateStr}</p>
             </div>

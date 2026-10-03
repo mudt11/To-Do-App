@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { ParsedTaskData } from '../AIChatBox';
 
 interface Message {
@@ -12,6 +13,8 @@ interface AIAssistantTabProps {
 }
 
 export default function AIAssistantTab({ onProposeTask }: AIAssistantTabProps) {
+  const { data: session } = useSession();
+  const userName = session?.user?.name ? session.user.name.split(' ').pop() : 'Bạn';
   const [messages, setMessages] = useState<Message[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem('ai_chat_history');
@@ -24,7 +27,7 @@ export default function AIAssistantTab({ onProposeTask }: AIAssistantTabProps) {
     return [
       {
         role: 'model',
-        text: 'Chào anh Đình Thạch! Tôi đã đồng bộ toàn bộ dữ liệu công việc, dự án và thói quen của anh. Hôm nay anh cần tôi hỗ trợ lập kế hoạch tuần, phân tích năng suất, hay gợi ý công việc ưu tiên?',
+        text: `Chào anh/chị ${userName}! Tôi đã đồng bộ toàn bộ dữ liệu công việc, dự án và thói quen của anh/chị. Hôm nay anh/chị cần tôi hỗ trợ lập kế hoạch tuần, phân tích năng suất, hay gợi ý công việc ưu tiên?`,
       },
     ];
   });
@@ -79,7 +82,7 @@ export default function AIAssistantTab({ onProposeTask }: AIAssistantTabProps) {
       } else {
         setMessages((prev) => [
           ...prev,
-          { role: 'model', text: 'Xin lỗi anh Thạch, tôi gặp sự cố kết nối với bộ não Gemini. Vui lòng kiểm tra lại API Key.' },
+          { role: 'model', text: `Xin lỗi ${userName}, tôi gặp sự cố kết nối với bộ não Gemini. Vui lòng kiểm tra lại API Key.` },
         ]);
       }
     } catch (_e) {

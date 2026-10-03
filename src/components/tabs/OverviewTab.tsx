@@ -84,11 +84,11 @@ export default function OverviewTab({ onAddTask, onEditTask, onToggleStatus, onT
   const loadData = async () => {
     try {
       setIsLoading(true);
-      const statsRes = await fetch('/api/stats');
+      const statsRes = await fetch('/api/stats', { cache: 'no-store' });
       const statsResult = await statsRes.json();
       if (statsResult.success) setStats(statsResult.data);
 
-      const tasksRes = await fetch('/api/tasks');
+      const tasksRes = await fetch('/api/tasks', { cache: 'no-store' });
       const tasksResult = await tasksRes.json();
       if (tasksResult.success) {
         setTodayTasks(tasksResult.data.slice(0, 5));

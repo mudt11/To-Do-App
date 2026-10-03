@@ -25,7 +25,7 @@ export default function TasksTab({ onAddTask, onEditTask, onToggleStatus, onTogg
       if (search) params.append('search', search);
       if (priorityFilter) params.append('priority', priorityFilter);
 
-      const res = await fetch(`/api/tasks?${params.toString()}`);
+      const res = await fetch(`/api/tasks?${params.toString()}`, { cache: 'no-store' });
       const result = await res.json();
       if (result.success) {
         setTasks(result.data);

@@ -1,0 +1,87 @@
+NHAPS
+├── .env
+├── .env.local
+├── .eslintrc.json
+├── .gitignore
+├── dev.db
+├── next-env.d.ts
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+prisma
+migrations
+20260702081038_init
+└── migration.sql
+20260702115208_upgrade_schema
+└── migration.sql
+└── migration_lock.toml
+└── schema.prisma
+├── prisma.config.ts
+├── README.md
+scratch
+├── generate_tree.js
+└── test_neon.js
+src
+app
+api
+ai
+assistant
+└── route.ts
+parse
+└── route.ts
+prioritize
+└── route.ts
+habits
+log
+└── route.ts
+├── route.ts
+[id]
+└── route.ts
+projects
+├── route.ts
+[id]
+└── route.ts
+seed
+└── route.ts
+stats
+└── route.ts
+tasks
+├── route.ts
+[id]
+└── route.ts
+├── favicon.ico
+fonts
+├── GeistMonoVF.woff
+└── GeistVF.woff
+├── globals.css
+├── layout.tsx
+└── page.tsx
+components
+├── AIChatBox.tsx
+├── AIPreviewModal.tsx
+├── AIPriorityModal.tsx
+tabs
+├── AIAssistantTab.tsx
+├── CalendarTab.tsx
+├── HabitsTab.tsx
+├── OverviewTab.tsx
+├── ProjectsTab.tsx
+├── SettingsTab.tsx
+├── StatsTab.tsx
+└── TasksTab.tsx
+├── TaskCard.tsx
+├── TaskForm.tsx
+└── TaskList.tsx
+lib
+└── prisma.ts
+services
+├── gemini.service.ts
+├── habit.service.ts
+├── project.service.ts
+└── task.service.ts
+types
+└── index.ts
+├── tailwind.config.ts
+├── tsconfig.json
+└── tsconfig.tsbuildinfo

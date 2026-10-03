@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -36,7 +36,7 @@ export default function LoginPage() {
         router.push(callbackUrl);
         router.refresh(); // Làm mới để cập nhật trạng thái session
       }
-    } catch (err) {
+    } catch {
       setError("Có lỗi xảy ra, vui lòng thử lại sau.");
     } finally {
       setLoading(false);

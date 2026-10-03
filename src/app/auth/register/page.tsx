@@ -33,7 +33,7 @@ export default function RegisterPage() {
       } else {
         setError(data.message || "Đăng ký thất bại");
       }
-    } catch (err) {
+    } catch {
       setError("Có lỗi xảy ra, vui lòng thử lại sau.");
     } finally {
       setLoading(false);

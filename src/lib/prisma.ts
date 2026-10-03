@@ -3,11 +3,15 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import { AsyncLocalStorage } from 'async_hooks';
 
+interface CustomNodeJsGlobal {
+  sessionContext: AsyncLocalStorage<{ userId: string }> | undefined;
+}
+
 export const sessionContext = 
-  (global as any).sessionContext || new AsyncLocalStorage<{ userId: string }>();
+  (global as unknown as CustomNodeJsGlobal).sessionContext || new AsyncLocalStorage<{ userId: string }>();
 
 if (process.env.NODE_ENV !== 'production') {
-  (global as any).sessionContext = sessionContext;
+  (global as unknown as CustomNodeJsGlobal).sessionContext = sessionContext;
 }
 
 const prismaClientSingleton = () => {
@@ -33,6 +37,7 @@ const prismaClientSingleton = () => {
           if (userId && ['Task', 'Project', 'Habit'].includes(model)) {
             // Tự động nhúng userId vào các thao tác DB cho đúng user
             if (operation === 'create') {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (args.data as any).user = { connect: { id: userId } };
             } else if (operation === 'createMany') {
               if (Array.isArray(args.data)) {
@@ -41,19 +46,26 @@ const prismaClientSingleton = () => {
             } else if (
               ['findMany', 'findFirst', 'findFirstOrThrow', 'count', 'updateMany', 'deleteMany'].includes(operation)
             ) {
-              (args as any).where = { ...(args as any).where, userId };
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const anyArgs = args as any;
+              anyArgs.where = { ...anyArgs.where, userId };
             } else if (['findUnique', 'findUniqueOrThrow', 'update', 'delete'].includes(operation)) {
               // Đối với thao tác Unique, ta không thể nhúng userId vào `where` trực tiếp nếu schema không cấu hình.
               // Chuyển findUnique sang findFirst để áp dụng điều kiện userId
               if (operation === 'findUnique') {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return (basePrisma as any)[model].findFirst({
-                  ...args,
-                  where: { ...args.where, userId }
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  ...(args as any),
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  where: { ...(args as any).where, userId }
                 });
               } else if (operation === 'update' || operation === 'delete') {
                 // Kiểm tra quyền sở hữu trước khi update/delete
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const record = await (basePrisma as any)[model].findFirst({
-                  where: { ...args.where, userId }
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  where: { ...(args as any).where, userId }
                 });
                 if (!record) throw new Error("Unauthorized or not found");
               }
